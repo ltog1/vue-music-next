@@ -1,4 +1,5 @@
-const path = require('path')
+const path = require('path');
+const registerRouter = require('./backend/router');
 
 const resolve = dir => {
   return path.join(__dirname, dir)
@@ -15,6 +16,11 @@ module.exports = {
           @import "@/assets/scss/mixin.scss";
         `
       }
+    }
+  },
+  devServer: {
+    before(app) {
+      registerRouter(app)
     }
   },
   chainWebpack: config => {

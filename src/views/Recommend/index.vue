@@ -1,13 +1,26 @@
 <template>
-  <div>recommend</div>
+  <div class="recommend">
+    recommend
+  </div>
 </template>
 
 <script>
   export default {
-    name: 'index'
+    name: 'index',
+    data() {
+      return {
+
+      };
+    },
+    created() {
+
+    },
+    methods: {
+
+    }
   }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+ @import "./index.scss";
 </style>
