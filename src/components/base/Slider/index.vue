@@ -10,14 +10,20 @@
         class="dot"
         v-for="(item,index) in sliders"
         :key="item.id"
-        :class="{'active': currentPageIndex === index}">
-      </span>
+        :class="{'active': currentPageIndex === index}"
+      ></span>
+    </div>
+    <div class="btn"></div>
+    <div class="wrap">
+      <teleport to=".btn">
+        <div class="main-button">main-button</div>
+      </teleport>
     </div>
   </div>
 </template>
 
 <script>
-  import { reactive, ref } from 'vue'
+  import { inject } from 'vue'
   export default {
     name: 'index',
     props: {
@@ -26,17 +32,14 @@
         default: () => []
       }
     },
-    setup() {
-      const book = reactive({ title: 'Vue 3 Guide' })
-      const count = ref(0)
-      return {
-        book,
-        count
-      }
-    },
-    created () {
-      console.log(this.book)
-      console.log(this.count)
+    setup(props, { expose }) {
+      const location = inject('location')
+      console.log(location.value)
+      const updateLocation = inject('updateLocation')
+      updateLocation('hello world')
+      console.log(location.value)
+      location.value = 'hello'
+      console.log(location.value)
     }
   }
 </script>

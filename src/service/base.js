@@ -12,7 +12,7 @@ export function get(url, params) {
   return axios.get(url, {
     params
   }).then((res) => {
-    const { data } = res;
+    const { data } = res
     if (data.code === ERR_OK) {
       return data.result
     }
