@@ -1,29 +1,30 @@
 <template>
-  <div class="slide">
-    <div class="slide-group">
-      <div class="slide-page" v-for="item in sliders" :key="item.id">
-        <a :href="item.link"><img :src="item.pic" /></a>
+  <div class="slider" ref="rootRef">
+    <div class="slider-group">
+      <div
+        class="slider-page"
+        v-for="item in sliders"
+        :key="item.id"
+      >
+        <a :href="item.link">
+          <img :src="item.pic"/>
+        </a>
       </div>
     </div>
     <div class="dots-wrapper">
       <span
         class="dot"
-        v-for="(item,index) in sliders"
+        v-for="(item, index) in sliders"
         :key="item.id"
-        :class="{'active': currentPageIndex === index}"
-      ></span>
-    </div>
-    <div class="btn"></div>
-    <div class="wrap">
-      <teleport to=".btn">
-        <div class="main-button">main-button</div>
-      </teleport>
+        :class="{'active': currentPageIndex === index}">
+      </span>
     </div>
   </div>
 </template>
 
 <script>
-  import { inject } from 'vue'
+  import { ref } from 'vue'
+  import { useSlider } from './use-slider'
   export default {
     name: 'index',
     props: {
@@ -32,14 +33,15 @@
         default: () => []
       }
     },
-    setup(props, { expose }) {
-      const location = inject('location')
-      console.log(location.value)
-      const updateLocation = inject('updateLocation')
-      updateLocation('hello world')
-      console.log(location.value)
-      location.value = 'hello'
-      console.log(location.value)
+    setup() {
+      const rootRef = ref(null)
+
+      const { currentPageIndex } = useSlider(rootRef)
+
+      return {
+        rootRef,
+        currentPageIndex
+      }
     }
   }
 </script>

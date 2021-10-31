@@ -1,36 +1,39 @@
 <template>
   <div class="recommend" ref="recommend">
-<!--    <Slider ref="slider"></Slider>-->
-    <div style="height: 500px" v-if="falg">
-      <Slider :list="sliders">
-        <div v-for="(item,index) in sliders" :key="index"><img :src="item.pic" style="display: block;width: 100%"></div>
-      </Slider>
+    <div class="recommend-content">
+      <div class="slider-wrapper">
+        <div class="slider-content">
+          <Slider :sliders="sliders" v-if="sliders.length"></Slider>
+        </div>
+      </div>
+      <div class="recommend-list">
+        <div class="list-title">热门歌单推荐</div>
+        <ul>
+          <li class="item" v-for="item in albums" :key="item.id">
+            <div class="icon"><img width="60" height="60" :src="item.pic" /></div>
+            <div class="text">
+              <h2 class="name">{{ item.username }}</h2>
+              <p class="title">{{ item.title }}</p>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
   import { getRecommend } from '@/service/recommend'
-  // import Slider from 'components/base/Slider'
-  import Slider from 'components/base/my-slider'
-  import { provide, ref, readonly } from 'vue'
+  import Slider from 'components/base/Slider'
   export default {
     name: 'index',
     components: {
       Slider
     },
-    setup() {
-      const location = ref('North Pole')
-      provide('location', readonly(location))
-      provide('updateLocation', (value) => {
-        location.value = value
-      })
-    },
     data() {
       return {
         sliders: [],
-        albums: [],
-        falg: false
+        albums: []
       }
     },
     created() {
@@ -39,10 +42,8 @@
     methods: {
       async getRecommend() {
         const data = await getRecommend()
-        console.log(data)
         this.sliders = data.sliders
         this.albums = data.albums
-        this.falg = true
       }
     }
   }
