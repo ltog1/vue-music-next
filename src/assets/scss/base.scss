@@ -11,11 +11,11 @@ body, html {
   position: relative;
 }
 
-.slide-enter-active, .slide-leave-active {
+.g-slide-enter-active, .g-slide-leave-active {
   transition: all 0.3s
 }
 
-.slide-enter-from, .slide-leave-to {
+.g-slide-enter-from, .g-slide-leave-to {
   transform: translate3d(100%, 0, 0)
 }
 

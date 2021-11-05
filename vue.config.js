@@ -27,5 +27,6 @@ module.exports = {
     config.resolve.alias
       .set('components', resolve('src/components'))
       .set('assets', resolve('src/assets'))
+      .set('common', resolve('src/common'))
   }
 }
