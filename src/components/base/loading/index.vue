@@ -9,7 +9,7 @@
 
 <script>
   export default {
-    name: 'index',
+    name: 'loading',
     data() {
       return {
         title: '正在载入...'

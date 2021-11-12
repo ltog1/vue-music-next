@@ -9,8 +9,12 @@
       class="bg-image"
       :style="`background-image: url(${bgImage})`"
     >
-      <div class="play-btn-wrapper" ref="playWrapper">
-        <div class="play-btn">
+      <div
+        ref="playWrapper"
+        class="play-btn-wrapper"
+        v-show="songs.length > 0"
+      >
+        <div class="play-btn" @click="randomClick">
           <i class="icon-play"></i>
           <span class="text">播放全部</span>
         </div>
@@ -23,9 +27,14 @@
       :probeType="3"
       @scroll="listScroll"
       v-loading="loading"
+      v-no-result:[noResultText]="noResult"
     >
       <div class="song-list-wrapper">
-        <song-list :rank="rank" :songs="songs" />
+        <song-list
+          :rank="rank"
+          :songs="songs"
+          @selectSong="selectSong"
+        />
       </div>
     </scroll>
   </div>
@@ -34,6 +43,7 @@
 <script>
   import SongList from 'components/base/song-list'
   import Scroll from 'components/base/Scroll'
+  import { mapActions } from 'vuex'
   export default {
     name: 'index',
     props: {
@@ -48,6 +58,14 @@
       rank: {
         type: Boolean,
         default: false
+      },
+      loading: {
+        type: Boolean,
+        default: false
+      },
+      noResultText: {
+        type: String,
+        default: '抱歉,没有找到可播放的歌曲'
       },
       songs: {
         type: Array,
@@ -64,32 +82,9 @@
       }
     },
     computed: {
-      loading() {
-        return !this.songs.length
+      noResult() {
+        return !this.loading && !this.songs.length
       }
-      // bgImageStyle() {
-      //   const scrollY = this.scrollY
-      //   const percent = scrollY / this.bgImageHeight
-      //   let scale = 1
-      //   let height = 0
-      //   let paddingTop = '70%'
-      //   let zIndex = 0
-      //   // let display = 'block'
-      //   if (scrollY >= 0) {
-      //     scale += percent
-      //   } else if (Math.abs(scrollY) >= this.maxTranslateY) {
-      //     height = 40
-      //     paddingTop = 0
-      //     zIndex = 10
-      //   }
-      //   return {
-      //     height: `${height}px`,
-      //     paddingTop,
-      //     zIndex,
-      //     backgroundImage: `url(${this.bgImage})`,
-      //     transform: `scale(${scale})`
-      //   }
-      // }
     },
     mounted() {
       this.initDom()
@@ -116,13 +111,12 @@
         if (pos.y >= 0) {
           scale += percent
         } else {
-          blur = Math.abs(pos.y) / this.bgImageHeight * 20
+          blur = Math.min(Math.abs(pos.y) / this.bgImageHeight * 20, this.maxTranslateY / this.bgImageHeight * 20)
           if (Math.abs(pos.y) >= this.maxTranslateY) {
             height = 40
             paddingTop = 0
             zIndex = 10
             display = 'none'
-            blur = 16
           }
         }
         this.$bgImage.style.transform = `scale(${scale})`
@@ -132,9 +126,22 @@
         this.$playWrapper.style.display = display
         this.$filter.style.backdropFilter = `blur(${blur}px)`
       },
+      selectSong(song, index) {
+        this.selectPlay({
+          list: this.songs,
+          index
+        })
+      },
+      randomClick() {
+        this.randomPlay(this.songs)
+      },
       back() {
         this.$router.back()
-      }
+      },
+      ...mapActions([
+        'selectPlay',
+        'randomPlay'
+      ])
     }
   }
 </script>

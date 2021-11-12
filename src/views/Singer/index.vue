@@ -1,13 +1,18 @@
 <template>
   <div class="singer" v-loading="loading">
     <index-list :data="singers" @selectItem="selectItem" />
-    <router-view :selectedSinger="selectedSinger"></router-view>
+    <router-view v-slot="{ Component }">
+      <transition name="g-slide" appear>
+        <component :is="Component" :selectedSinger="selectedSinger" />
+      </transition>
+    </router-view>
   </div>
 </template>
 
 <script>
   import { getSingerList } from '@/service/singer'
   import IndexList from 'components/base/index-list'
+  import { SINGER_KEY } from 'common/js/constant'
   export default {
     name: 'index',
     components: {
@@ -34,6 +39,7 @@
       },
       selectItem(singer) {
         this.selectedSinger = singer
+        window.sessionStorage.setItem(SINGER_KEY, JSON.stringify(singer))
         this.$router.push({
           path: `/singer/${singer.mid}`
         })

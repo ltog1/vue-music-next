@@ -1,11 +1,16 @@
 <template>
   <div class="song-list">
     <ul>
-      <li class="item" v-for="(item,index) in songs" :key="index">
+      <li
+        class="item"
+        v-for="(song,index) in songs"
+        :key="index"
+        @click="selectItem(song, index)"
+      >
         <div class="rank" v-if="rank"></div>
         <div class="content">
-          <div class="name">{{ item.name }}</div>
-          <div class="desc">{{ item.album }}</div>
+          <div class="name">{{ song.name }}</div>
+          <div class="desc">{{ song.album }}</div>
         </div>
       </li>
     </ul>
@@ -23,6 +28,12 @@
       songs: {
         type: Array,
         default: () => []
+      }
+    },
+    emits: ['selectSong'],
+    methods: {
+      selectItem(song, index) {
+        this.$emit('selectSong', song, index)
       }
     }
   }
