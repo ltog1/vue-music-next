@@ -1,6 +1,10 @@
 <template>
   <transition name="mini" appear>
-    <div class="mini-player" v-show="!fullScreen">
+    <div
+      v-show="!fullScreen"
+      class="mini-player"
+      @click="showNormalPlayer"
+    >
       <div class="cd-wrapper">
         <div class="cd" ref="cdRef">
           <img
@@ -12,11 +16,18 @@
           >
         </div>
       </div>
-      <div>
-        <h2 class="name">{{ currentSong.name }}</h2>
-        <p class="desc">{{ currentSong.singer }}</p>
-      </div>
-     <div class="slider-wrapper"></div>
+     <div class="slider-wrapper" ref="sliderWrapperRef">
+       <div class="slider-group">
+         <div
+           class="slider-page"
+           v-for="song in playList"
+           :key="song.id"
+         >
+           <h2 class="name">{{ song.name }}</h2>
+           <p class="desc">{{ song.singer }}</p>
+         </div>
+       </div>
+     </div>
       <div class="control" style="height: 34px">
         <progress-circle
           :width="32"
@@ -29,57 +40,81 @@
           <i
             class="icon-mini"
             :class="[playing ? 'icon-pause-mini' : 'icon-play-mini']"
-            @click="togglePlaying"
+            @click.stop="togglePlaying"
           ></i>
         </progress-circle>
       </div>
-      <div class="control"><i class="icon-playlist"></i></div>
+      <div class="control" @click.stop="showPlaylist">
+        <i class="icon-playlist"></i>
+      </div>
+      <play-list ref="playlistRef" />
     </div>
   </transition>
 </template>
 
 <script>
   import ProgressCircle from './progress-circle'
+  import PlayList from './play-list'
   import { useStore } from 'vuex'
-  import { computed } from 'vue'
+  import { computed, ref } from 'vue'
   import useCd from '../use-cd'
+  import useMiniSlider from '../use-mini-slider'
   export default {
     name: 'mini-player',
+    components: {
+      ProgressCircle,
+      PlayList
+    },
     props: {
       currentPercent: {
         type: Number,
         default: 0
+      },
+      togglePlaying: {
+        type: Function,
+        default: () => {}
       }
     },
-    components: {
-      ProgressCircle
-    },
     setup() {
+      // data
+      const playlistRef = ref(null)
+
       // vuex
       const store = useStore()
       const fullScreen = computed(() => store.state.fullScreen)
       const currentSong = computed(() => store.getters.currentSong)
       const playing = computed(() => store.state.playing)
+      const playList = computed(() => store.state.playList)
 
       // hooks
       const { cdRef, cdImageRef, cdCls } = useCd()
+      const { sliderWrapperRef } = useMiniSlider()
 
       // methods
-      function togglePlaying() {
-        store.commit('setPlaying', !playing.value)
+      function showPlaylist() {
+        playlistRef.value.show()
+      }
+      function showNormalPlayer() {
+        store.commit('setFullScreen', true)
       }
 
       return {
+        // data
+        playlistRef,
         // vuex
         currentSong,
         playing,
         fullScreen,
+        playList,
         // methods
-        togglePlaying,
+        showPlaylist,
+        showNormalPlayer,
         // cd
         cdRef,
         cdImageRef,
-        cdCls
+        cdCls,
+        // miniSlider
+        sliderWrapperRef
       }
     }
   }

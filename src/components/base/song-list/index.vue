@@ -7,7 +7,11 @@
         :key="index"
         @click="selectItem(song, index)"
       >
-        <div class="rank" v-if="rank"></div>
+        <div class="rank" v-if="rank">
+          <span :class="[index + 1 > 3 ? 'text' : `icon icon${index}`]">
+            {{ index + 1 > 3 ? index + 1: '' }}
+          </span>
+        </div>
         <div class="content">
           <div class="name">{{ song.name }}</div>
           <div class="desc">{{ song.album }}</div>

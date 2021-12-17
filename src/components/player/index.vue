@@ -1,6 +1,13 @@
 <template>
   <div class="player" v-show="playList.length">
-    <transition name="normal" appear>
+    <transition
+      name="normal"
+      appear
+      @enter="enter"
+      @after-enter="afterEnter"
+      @leave="leave"
+      @after-leave="afterLeave"
+    >
       <div class="normal-player" v-show="fullScreen">
         <div class="background">
           <img :src="currentSong.pic" />
@@ -17,7 +24,7 @@
           @touchend.prevent="onMiddleTouchEnd"
         >
           <div class="middle-l" :style="middleLStyle">
-            <div class="cd-wrapper">
+            <div class="cd-wrapper" ref="cdWrapperRef">
               <div class="cd" ref="cdRef">
                 <img
                   ref="cdImageRef"
@@ -92,7 +99,11 @@
       </div>
     </transition>
 
-    <mini-player :currentPercent="currentPercent" />
+    <mini-player
+      ref="miniPlayerRef"
+      :currentPercent="currentPercent"
+      :togglePlaying="togglePlaying"
+    />
 
     <audio
       ref="audioRef"
@@ -119,6 +130,7 @@
   import useCd from './use-cd'
   import useLyric from './use-lyric'
   import useMiddleInteractive from './use-middle-interactive'
+  import useAnimation from './use-animation'
   export default {
     name: 'index',
     components: {
@@ -148,6 +160,7 @@
       const { cdRef, cdImageRef, cdCls } = useCd()
       const { currentLyric, playingLyric, pureMusicLyric, currentLineNum, lyricListRef, lyricScrollRef, playLyric, stopLyric } = useLyric(currentTime)
       const { middleLStyle, middleRStyle, currentShow, onMiddleTouchStart, onMiddleTouchMove, onMiddleTouchEnd } = useMiddleInteractive()
+      const { cdWrapperRef, miniPlayerRef, enter, afterEnter, leave, afterLeave } = useAnimation()
 
       // computed
       const disableCls = computed(() => songReady.value ? '' : 'disable')
@@ -162,6 +175,7 @@
         songReady.value = false
         await nextTick()
         audioRef.value.play()
+        store.commit('setPlaying', true)
       })
       watch(playing, newVal => {
         if (!songReady.value) {
@@ -198,7 +212,6 @@
           }
           store.commit('setCurrentIndex', index)
         }
-        store.commit('setPlaying', true)
       }
       function next() {
         if (!songReady.value) {
@@ -214,7 +227,6 @@
           }
           store.commit('setCurrentIndex', index)
         }
-        store.commit('setPlaying', true)
       }
       function loop() {
         const $audio = audioRef.value
@@ -305,7 +317,14 @@
         currentShow,
         onMiddleTouchStart,
         onMiddleTouchMove,
-        onMiddleTouchEnd
+        onMiddleTouchEnd,
+        // animation
+        cdWrapperRef,
+        miniPlayerRef,
+        enter,
+        afterEnter,
+        leave,
+        afterLeave
       }
     }
   }

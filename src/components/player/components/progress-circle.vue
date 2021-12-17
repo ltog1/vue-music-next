@@ -21,8 +21,8 @@
         :cx="cx"
         :cy="cy"
         fill="transparent"
-        :stroke-dashoffset="dashoffset"
         :stroke-dasharray="dashArray"
+        :stroke-dashoffset="dashoffset"
         :style="`stroke: ${strokeColor};stroke-width: ${strokeWidth}px`"
       >
       </circle>

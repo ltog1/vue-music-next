@@ -42,8 +42,10 @@
       }
     },
     updated() {
-      this.barWidth = this.$el.clientWidth
-      this.touch.startX = this.$el.getBoundingClientRect().left
+      if (!this.barWidth) {
+        this.barWidth = this.$el.clientWidth
+        this.touch.startX = this.$el.getBoundingClientRect().left
+      }
     },
     mounted() {
       this.touch = {

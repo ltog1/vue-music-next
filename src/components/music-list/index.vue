@@ -24,6 +24,7 @@
     <scroll
       ref="list"
       class="list"
+      :style="listBottom"
       :probeType="3"
       @scroll="listScroll"
       v-loading="loading"
@@ -42,8 +43,8 @@
 
 <script>
   import SongList from 'components/base/song-list'
-  import Scroll from 'components/base/Scroll'
-  import { mapActions } from 'vuex'
+  import Scroll from 'components/wrap-scroll'
+  import { mapState, mapActions } from 'vuex'
   export default {
     name: 'index',
     props: {
@@ -84,6 +85,15 @@
     computed: {
       noResult() {
         return !this.loading && !this.songs.length
+      },
+      ...mapState([
+        'playList'
+      ]),
+      listBottom() {
+        const bottom = this.playList.length ? '60px' : '0'
+        return {
+          bottom
+        }
       }
     },
     mounted() {

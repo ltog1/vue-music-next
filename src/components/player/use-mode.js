@@ -16,6 +16,16 @@ function useMode() {
     return icon
   })
 
+  const modeText = computed(() => {
+    const text =
+      playMode.value === PLAY_MODE.sequence
+        ? '顺序播放'
+        : playMode.value === PLAY_MODE.loop
+        ? '循环播放'
+        : '随机播放'
+    return text
+  })
+
   function changeMode() {
     const mode = (playMode.value + 1) % 3
     store.dispatch('changeMode', mode)
@@ -23,6 +33,7 @@ function useMode() {
 
   return {
     modeIcon,
+    modeText,
     changeMode
   }
 }

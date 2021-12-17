@@ -3,13 +3,7 @@ import { shuffle, findIndex } from 'common/js/util'
 
 const actions = {
   selectPlay({ commit, state }, { list, index }) {
-    if (state.playMode === PLAY_MODE.random) {
-      const randomList = shuffle(list)
-      commit('setPlayList', randomList)
-      index = findIndex(randomList, list[index])
-    } else {
-      commit('setPlayList', list)
-    }
+    commit('setPlayList', list)
     commit('setSequenceList', list)
     commit('setCurrentIndex', index)
     commit('setPlaying', true)
@@ -37,6 +31,38 @@ const actions = {
       commit('setPlayList', list)
     }
     commit('setPlayMode', mode)
+  },
+  removeSong({ commit, state }, song) {
+    let currentIndex = state.currentIndex
+    const playList = state.playList.concat()
+    const sequenceList = state.sequenceList.concat()
+
+    const playIndex = findIndex(state.playList, song)
+    if (playIndex > -1) {
+      playList.splice(playIndex, 1)
+      if (playIndex < currentIndex || currentIndex === playList.length) {
+        currentIndex--
+      }
+    }
+
+    const sequenceIndex = findIndex(state.sequenceList, song)
+    if (sequenceIndex > -1) {
+      sequenceList.splice(sequenceIndex, 1)
+    }
+
+    commit('setCurrentIndex', currentIndex)
+    commit('setPlayList', playList)
+    commit('setSequenceList', sequenceList)
+
+    if (!playList.length) {
+      commit('setPlaying', false)
+    }
+  },
+  clearPlay({ commit }) {
+    commit('setPlayList', [])
+    commit('setSequenceList', [])
+    commit('setCurrentIndex', -1)
+    commit('setPlaying', false)
   }
 }
 

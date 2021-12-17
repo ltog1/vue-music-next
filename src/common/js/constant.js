@@ -1,7 +1,8 @@
 
 export const SINGER_KEY = '__singer__'
-
+export const ALBUM_KEY = '__album__'
 export const FAVORITE_KEY = '__favorite__'
+export const RANK_KEY = '__top__'
 export const FAVORITE_MAX_LENGTH = 100
 
 // 播放方式(顺序0/循环1/随机2)

@@ -11,7 +11,7 @@
 
 <script>
   import { getSingerList } from '@/service/singer'
-  import IndexList from 'components/base/index-list'
+  import IndexList from 'components/index-list'
   import { SINGER_KEY } from 'common/js/constant'
   export default {
     name: 'index',
