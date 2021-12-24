@@ -28,6 +28,7 @@
                 class="item"
                 v-for="song in sequenceList"
                 :key="song.id"
+                @click="selectItem(song)"
               >
                 <i class="current" :class="getCurrentIcon(song)"></i>
                 <span class="text" >{{ song.name }}</span>

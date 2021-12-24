@@ -24,7 +24,7 @@
 
     <router-view v-slot="{ Component }">
       <transition name="g-slide" appear>
-        <component :is="Component" :selectedSinger="selectedSinger" />
+        <component :is="Component" :data="selectedSinger" />
       </transition>
     </router-view>
   </div>

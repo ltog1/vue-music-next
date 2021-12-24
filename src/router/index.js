@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
 const routes = [
   {
     path: '/',
@@ -38,7 +37,12 @@ const routes = [
   {
     path: '/search',
     name: 'search',
-    component: () => import(/* webpackChunkName: "search" */ '@/views/Search/index')
+    component: () => import(/* webpackChunkName: "search" */ '@/views/Search/index'),
+    children: [{
+      path: ':id',
+      name: 'search-detail',
+      component: () => import(/* webpackChunkName: "search-detail" */ '@/views/Singer/components/singer-detail')
+    }]
   }
 ]
 

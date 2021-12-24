@@ -63,6 +63,40 @@ const actions = {
     commit('setSequenceList', [])
     commit('setCurrentIndex', -1)
     commit('setPlaying', false)
+  },
+  insertSong({ commit, state }, song) {
+    let currentIndex = state.currentIndex
+    const playList = state.playList.concat()
+    const sequenceList = state.sequenceList.concat()
+
+    currentIndex++
+    const playIndex = findIndex(playList, song)
+    const sequenceIndex = findIndex(sequenceList, song)
+    playList.splice(currentIndex, 0, song)
+    sequenceList.splice(currentIndex, 0, song)
+
+    if (playIndex > -1) {
+      // 要插入的歌曲在当前歌曲播放列表的前面
+      if (playIndex < currentIndex) {
+        playList.splice(playIndex, 1)
+        currentIndex--
+      } else { // 要插入的歌曲在当前歌曲播放列表的后面
+        playList.splice(playIndex + 1, 1)
+      }
+    }
+    if (sequenceIndex > -1) {
+      if (sequenceIndex < currentIndex) {
+        sequenceList.splice(sequenceIndex, 1)
+      } else {
+        sequenceList.splice(sequenceIndex + 1, 1)
+      }
+    }
+
+    commit('setPlaying', true)
+    commit('setFullScreen', true)
+    commit('setPlayList', playList)
+    commit('setSequenceList', sequenceList)
+    commit('setCurrentIndex', currentIndex)
   }
 }
 

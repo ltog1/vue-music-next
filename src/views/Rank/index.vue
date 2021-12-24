@@ -1,5 +1,5 @@
 <template>
-  <div class="rank">
+  <div class="rank" v-loading="loading">
     <scroll class="rank-content">
       <ul>
         <li
@@ -26,7 +26,7 @@
 
     <router-view v-slot="{ Component }">
       <transition name="g-slide" appear>
-        <component :is="Component" :selectedSinger="selectedSinger" />
+        <component :is="Component" :data="selectedSinger" />
       </transition>
     </router-view>
   </div>
@@ -45,6 +45,11 @@
       return {
         topList: [],
         selectedSinger: null
+      }
+    },
+    computed: {
+      loading() {
+        return !this.topList.length
       }
     },
     created() {

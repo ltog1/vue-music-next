@@ -185,6 +185,7 @@
         if (newVal) {
           audioRef.value.play()
           playLyric()
+          console.log('playLyric')
         } else {
           audioRef.value.pause()
           stopLyric()
@@ -229,9 +230,9 @@
         }
       }
       function loop() {
-        const $audio = audioRef.value
-        $audio.currentTime = 0
-        $audio.play()
+        currentTime.value = 0
+        audioRef.value.currentTime = 0
+        store.commit('setPlaying', true)
       }
       // 兼容不是用户行为触发的暂停事件 (如电脑待机，关闭屏幕等) 此时应把播放器暂停,避免后续数据出错
       function pause() {

@@ -2,8 +2,12 @@ import { storage } from './util'
 
 function insertArray(list, value, compare, maxLength) {
   const index = list.findIndex(compare)
-  if (index > -1) {
+  if (index === 0) {
     return
+  }
+
+  if (index > -1) {
+    list.splice(index, 1)
   }
 
   list.unshift(value)

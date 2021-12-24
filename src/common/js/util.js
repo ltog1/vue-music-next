@@ -88,11 +88,22 @@ function debounce(func, wait, immediate = true) {
   }
 }
 
+function throttle(func, maxWait) {
+  let lastTime
+  return function(...rest) {
+    if (!lastTime || (new Date().getTime() - lastTime > maxWait)) {
+      lastTime = +new Date()
+      func.apply(this, rest)
+    }
+  }
+}
+
 export {
   getRandom,
   shuffle,
   formatTime,
   findIndex,
   debounce,
+  throttle,
   storage
 }

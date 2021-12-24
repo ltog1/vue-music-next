@@ -5,7 +5,7 @@ const state = {
   playList: [], // 播放列表
   sequenceList: [], // 顺序播放列表
   playMode: PLAY_MODE.sequence,
-  currentIndex: 0,
+  currentIndex: -1,
   fullScreen: false, // 播放器是否全屏
   playing: false, // 是否播放
   favoriteList: load(FAVORITE_KEY)

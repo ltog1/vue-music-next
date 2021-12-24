@@ -1,7 +1,7 @@
 import MusicList from 'components/music-list'
 import { processSongs } from '@/service/song'
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 function createDetailComponent(name, localKey, requestFn) {
   return {
@@ -19,6 +19,7 @@ function createDetailComponent(name, localKey, requestFn) {
       const songs = ref([])
       const loading = ref(true)
 
+      const router = useRouter()
       const route = useRoute()
 
       const computedData = computed(() => {
@@ -26,7 +27,7 @@ function createDetailComponent(name, localKey, requestFn) {
         if (props.data) {
           data = props.data
         } else {
-          const localData = JSON.parse(window.sessionStorage.getItem(localKey)) || null
+          const localData = JSON.parse(window.sessionStorage.getItem(localKey)) || {}
           //  缓存的singer中的mid和路由参数中的mid做判断  判断是否在当前页刷新
           if (localData.mid === route.params.id || localData.id === +route.params.id) {
             data = localData
@@ -48,8 +49,9 @@ function createDetailComponent(name, localKey, requestFn) {
       })
 
       async function getSongList() {
+        console.log(props.data)
         if (!computedData.value) {
-          route.push({
+          router.push({
             path: route.matched[0].path
           })
           return
