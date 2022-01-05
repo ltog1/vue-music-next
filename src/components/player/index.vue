@@ -131,6 +131,7 @@
   import useLyric from './use-lyric'
   import useMiddleInteractive from './use-middle-interactive'
   import useAnimation from './use-animation'
+  import usePlayHistory from './use-play-history'
   export default {
     name: 'index',
     components: {
@@ -161,6 +162,7 @@
       const { currentLyric, playingLyric, pureMusicLyric, currentLineNum, lyricListRef, lyricScrollRef, playLyric, stopLyric } = useLyric(currentTime)
       const { middleLStyle, middleRStyle, currentShow, onMiddleTouchStart, onMiddleTouchMove, onMiddleTouchEnd } = useMiddleInteractive()
       const { cdWrapperRef, miniPlayerRef, enter, afterEnter, leave, afterLeave } = useAnimation()
+      const { savePlay } = usePlayHistory()
 
       // computed
       const disableCls = computed(() => songReady.value ? '' : 'disable')
@@ -175,6 +177,7 @@
         songReady.value = false
         await nextTick()
         audioRef.value.play()
+        savePlay(newSong)
         store.commit('setPlaying', true)
       })
       watch(playing, newVal => {
@@ -185,7 +188,6 @@
         if (newVal) {
           audioRef.value.play()
           playLyric()
-          console.log('playLyric')
         } else {
           audioRef.value.pause()
           stopLyric()

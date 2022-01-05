@@ -45,7 +45,7 @@
               </li>
             </transition-group>
           </scroll>
-          <div class="list-add">
+          <div class="list-add" @click="showAddSong">
             <div class="add">
               <i class="icon-add"></i>
               <span class="text">添加歌曲到队列</span>
@@ -54,7 +54,8 @@
           <div class="list-footer" @click="hide">关闭</div>
         </div>
 
-        <confirm ref="confirmRef" @confirm="clearPlay" />
+        <Confirm ref="confirmRef" @confirm="clearPlay" />
+        <add-song ref="addSongRef" />
       </div>
     </transition>
   </teleport>
@@ -66,13 +67,15 @@
   import { findIndex } from 'common/js/util'
   import Scroll from 'components/base/Scroll'
   import Confirm from 'components/base/confirm'
+  import AddSong from 'components/add-song'
   import useFavorite from '../use-favorite'
   import useMode from '../use-mode'
   export default {
     name: 'play-list',
     components: {
       Scroll,
-      Confirm
+      Confirm,
+      AddSong
     },
     setup() {
       // data
@@ -80,6 +83,7 @@
       const confirmRef = ref(null)
       const scrollRef = ref(null)
       const listRef = ref(null)
+      const addSongRef = ref(null)
       const removeing = ref(false)
 
       // vuex
@@ -146,6 +150,9 @@
           scrollRef.value.scroll.scrollToElement(currentElm, 500)
         }
       }
+      function showAddSong() {
+        addSongRef.value.show()
+      }
 
       return {
         // data
@@ -154,6 +161,7 @@
         scrollRef,
         listRef,
         removeing,
+        addSongRef,
         // vuex
         sequenceList,
         playList,
@@ -165,6 +173,7 @@
         selectItem,
         showConfirm,
         clearPlay,
+        showAddSong,
         // favourite
         getFavoriteIcon,
         toggleFavorite,

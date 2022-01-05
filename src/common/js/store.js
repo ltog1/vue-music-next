@@ -41,8 +41,13 @@ function load(key) {
   return storage.get(key) || []
 }
 
+function clear(key) {
+  storage.remove(key)
+}
+
 export {
   save,
   remove,
-  load
+  load,
+  clear
 }

@@ -6,29 +6,41 @@ import { onMounted, onUnmounted, ref } from 'vue'
 BScroll.use(Pullup)
 BScroll.use(ObserveDOM)
 
-function usePullUpLoad(pullingUpHandler) {
-  const pullup = ref(null)
+function usePullUpLoad(pullingUpHandler, preventPullUpLoad) {
+  const scroll = ref(null)
   const rootRef = ref(null)
+  const isPullUpLoad = ref(false)
 
   onMounted(() => {
-    pullup.value = new BScroll(rootRef.value, {
+    scroll.value = new BScroll(rootRef.value, {
       observeDOM: true,
       click: true,
       pullUpLoad: true
     })
 
-    pullup.value.on('pullingUp', () => {
-      pullingUpHandler()
+    scroll.value.on('pullingUp', async () => {
+      if (preventPullUpLoad.value) {
+        scroll.value.finishPullUp()
+        scroll.value.refresh()
+        return
+      }
+
+      isPullUpLoad.value = true
+      await pullingUpHandler()
+      scroll.value.finishPullUp()
+      scroll.value.refresh()
+      isPullUpLoad.value = false
     })
   })
 
   onUnmounted(() => {
-    pullup.value.destroy()
+    scroll.value.destroy()
   })
 
   return {
     rootRef,
-    pullup
+    scroll,
+    isPullUpLoad
   }
 }
 

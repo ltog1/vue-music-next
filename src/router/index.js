@@ -43,6 +43,12 @@ const routes = [
       name: 'search-detail',
       component: () => import(/* webpackChunkName: "search-detail" */ '@/views/Singer/components/singer-detail')
     }]
+  },
+  {
+    path: '/user',
+    components: {
+      user: () => import(/* webpackChunkName: "user" */ '@/views/User/index')
+    }
   }
 ]
 

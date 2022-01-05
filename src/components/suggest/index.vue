@@ -23,6 +23,7 @@
           <p class="text">{{ song.singer }}-{{ song.name }}</p>
         </div>
       </li>
+      <div class="suggest-item" v-loading:[loadingText]="pullUpLoading"></div>
     </ul>
   </div>
 </template>
@@ -30,7 +31,7 @@
 <script>
   import { search } from '@/service/search'
   import { processSongs } from '@/service/song'
-  import { watch, ref, computed } from 'vue'
+  import { watch, ref, computed, nextTick } from 'vue'
   import usePullUpLoad from './use-pull-up-load'
   export default {
     name: 'index',
@@ -49,62 +50,66 @@
       // data
       const page = ref(1)
       const suggestList = ref([])
-      const hasMore = ref(false)
+      const hasMore = ref(true)
       const singer = ref(null)
-      const loading = ref(true)
       const loadingText = ref(' ')
-      let isPullUpLoad = false
+      const manuaLoading = ref(false)
 
       // computed
-      const noResult = computed(() => !loading.value && !suggestList.value.length)
+      const loading = computed(() => !singer.value && !suggestList.value.length)
+      const noResult = computed(() => loading.value && !hasMore.value)
       const noResultText = computed(() => '抱歉,暂无搜素结果')
+      const pullUpLoading = computed(() => isPullUpLoad.value && hasMore.value)
+
+      const preventPullUpLoad = computed(() => loading.value || manuaLoading.value)
 
       // hooks
-      const { rootRef, pullup } = usePullUpLoad(pullingUpHandler)
+      const { rootRef, isPullUpLoad, scroll } = usePullUpLoad(pullingUpHandler, preventPullUpLoad)
 
-      watch(() => props.query, val => {
-        if (!val) {
-          reset()
+      watch(() => props.query, newVal => {
+        if (!newVal) {
           return
         }
 
-        getSearch(val, page.value)
+        searchFirst()
       })
 
-      function reset() {
+      async function searchFirst() {
         suggestList.value = []
-        hasMore.value = false
+        hasMore.value = true
         page.value = 1
         singer.value = null
-      }
-      async function getSearch(query, page, isPullUpLoad = false) {
-        const data = await search(query, page, props.showSinger)
-        await processSongs(data.songs) // 批量获取歌曲url
-        if (isPullUpLoad) {
-          suggestList.value = suggestList.value.concat(data.songs)
-        } else {
-          suggestList.value = data.songs
-        }
+
+        const { query, showSinger } = props
+        const data = await search(query, page.value, showSinger)
+        suggestList.value = await processSongs(data.songs)
         hasMore.value = data.hasMore
         singer.value = data.singer
-        loading.value = false
-
-        return data
+        await nextTick()
+        await makeItScrollable()
+      }
+      async function searchMore() {
+        page.value++
+        const { query, showSinger } = props
+        const data = await search(query, page.value, showSinger)
+        suggestList.value = suggestList.value.concat(await processSongs(data.songs))
+        hasMore.value = data.hasMore
+        singer.value = data.singer
+        await makeItScrollable()
       }
       async function pullingUpHandler() {
-        if (hasMore.value) {
-          if (isPullUpLoad) {
-            return
-          }
+        if (!hasMore.value) {
+          return
+        }
 
-          isPullUpLoad = true
-          page.value++
-          await getSearch(props.query, page.value, true)
-          pullup.value.finishPullUp()
-          pullup.value.refresh()
-          isPullUpLoad = false
-        } else {
-          console.log('nomore')
+        await searchMore()
+      }
+      async function makeItScrollable() {
+        // 如果首次搜索数据的不足占满一屏,则再次请求接口,直到数据能占满一屏
+        while (scroll.value.maxScrollY >= -1 && props.query) {
+          manuaLoading.value = true
+          await searchMore()
+          manuaLoading.value = false
         }
       }
       function selectSong(song) {
@@ -124,8 +129,9 @@
         noResult,
         noResultText,
         // hooks
-        // pullup
+        // pullUpLoad
         rootRef,
+        pullUpLoading,
         // methods
         selectSong,
         selectSinger

@@ -49,7 +49,6 @@ function createDetailComponent(name, localKey, requestFn) {
       })
 
       async function getSongList() {
-        console.log(props.data)
         if (!computedData.value) {
           router.push({
             path: route.matched[0].path

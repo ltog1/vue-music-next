@@ -3,11 +3,16 @@
     <transition-group tag="ul" name="list">
       <li
         class="search-item"
-        v-for="(item,index) in list"
-        :key="index"
+        v-for="item in list"
+        :key="item"
+        @click="selectSearch(item)"
       >
         <span class="text">{{ item }}</span>
-        <span class="icon" @click="deleteHistory(item)">
+        <span
+          class="icon"
+          @click.stop="deleteHistory(item)"
+          v-show="showDelete"
+        >
           <i class="icon-delete"></i>
         </span>
       </li>
@@ -22,12 +27,19 @@
       list: {
         type: Array,
         default: () => []
+      },
+      showDelete: {
+        type: Boolean,
+        default: true
       }
     },
-    emits: ['deleteHistory'],
+    emits: ['deleteSearch', 'selectSearch'],
     methods: {
       deleteHistory(item) {
-        this.$emit('deleteHistory', item)
+        this.$emit('deleteSearch', item)
+      },
+      selectSearch(item) {
+        this.$emit('selectSearch', item)
       }
     }
   }

@@ -75,6 +75,7 @@ const actions = {
     playList.splice(currentIndex, 0, song)
     sequenceList.splice(currentIndex, 0, song)
 
+    /* 因为播放列表控制着歌曲播放,所以播放列表的currentIndex要因为插入的数组长度变化而随之改变 */
     if (playIndex > -1) {
       // 要插入的歌曲在当前歌曲播放列表的前面
       if (playIndex < currentIndex) {
@@ -84,6 +85,8 @@ const actions = {
         playList.splice(playIndex + 1, 1)
       }
     }
+
+    /* 而顺序播放列表不控制着歌曲播放,所以改变顺序播放列表时currentIndex不用随之改变 */
     if (sequenceIndex > -1) {
       if (sequenceIndex < currentIndex) {
         sequenceList.splice(sequenceIndex, 1)
