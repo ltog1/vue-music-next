@@ -4,7 +4,7 @@ import axiosRetry from 'axios-retry' // 失败重新请求插件
 axiosRetry(axios, { retries: 5 })
 
 const ERR_OK = 0
-const baseURL = process.env.NODE_ENV === 'production' ? '101.33.199.95/music-next/' : '/'
+const baseURL = process.env.NODE_ENV === 'production' ? '/music-next/' : '/'
 
 axios.defaults.baseURL = baseURL
 
